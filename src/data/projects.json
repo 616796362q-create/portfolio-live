@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "Full-Stack POS Terminal",
+    "description": "Cloud-scale point-of-sale terminal with real-time inventory, barcode scanning, and multi-branch support. Built with Next.js, Express, and MongoDB.",
+    "imageUrl": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=800",
+    "category": "Software / POS",
+    "link": "https://pos-system-pink-zeta.vercel.app/pos",
+    "githubUrl": "https://github.com/616796362q-create/pos-system"
+  },
+  {
+    "id": 2,
+    "title": "Manara Plaza Platform",
+    "description": "Premium hospitality suite featuring integrated Hotel, Restaurant, and Cafe management with WhatsApp commerce and real-time booking.",
+    "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
+    "category": "Premium Platform",
+    "link": "https://manara-plaza-resort.vercel.app/",
+    "githubUrl": "https://github.com/616796362q-create/manara"
+  },
+  {
+    "id": 3,
+    "title": "Dukaan Scan Hub",
+    "description": "Multi-vendor inventory management system with real-time syncing, global payment gateways, and highly optimized merchant storefronts.",
+    "imageUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+    "category": "Retail / Web",
+    "link": "https://dukaanscan.netlify.app/",
+    "githubUrl": "https://github.com/616796362q-create/dukaan-scan-hub"
+  },
+  {
+    "id": 4,
+    "title": "Fireshoes Store",
+    "description": "Premium footwear e-commerce landing page featuring a bold, high-heat aesthetic with optimized product displays and marketing sections.",
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800",
+    "category": "Retail / shoe",
+    "link": "https://fireshoes.netlify.app",
+    "githubUrl": "https://github.com/616796362q-create/fireshoes"
+  },
+  {
+    "id": 5,
+    "title": "Xamar Pizza",
+    "description": "Professional pizza ordering platform with a dark, premium visual theme, showcasing a curated menu and streamlined ordering workflow.",
+    "imageUrl": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=800",
+    "category": "Food / pizza",
+    "link": "https://xamarpizza.netlify.app",
+    "githubUrl": "https://github.com/616796362q-create/xamarpizza"
+  },
+  {
+    "id": 6,
+    "title": "PRO1 Education Suite",
+    "description": "Enterprise-grade educational management system with real-time student tracking, automated grading, and resource planning.",
+    "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800",
+    "category": "Enterprise EdTech",
+    "link": "#",
+    "githubUrl": "https://github.com/616796362q-create/pro1"
+  }
+]
