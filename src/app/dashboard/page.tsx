@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Activity, Users, Zap, Server, Globe, ArrowUpRight, ArrowDownRight, LayoutDashboard, Settings, Bell, LogOut, Search, Terminal } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Activity, Users, Zap, Server, Globe, ArrowUpRight, ArrowDownRight, LayoutDashboard, Settings, Bell, LogOut, Search, Terminal, Mail, MailOpen, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 
 const STATS = [
@@ -22,13 +22,24 @@ const RECENT_ACTIVITY = [
 
 const CHART_DATA = [30, 45, 38, 65, 48, 75, 55, 82, 60, 45, 70, 95];
 
+type ContactMessage = {
+  name: string;
+  email: string;
+  message: string;
+  time: string;
+  read: boolean;
+};
+
 export default function Dashboard() {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [selectedMsg, setSelectedMsg] = useState<ContactMessage | null>(null);
 
   useEffect(() => {
-    // Basic auth check
     if (localStorage.getItem('auth_status') === 'true') {
       setIsAuth(true);
+      const stored = JSON.parse(localStorage.getItem('contact_messages') || '[]');
+      setMessages(stored);
     } else {
       window.location.href = '/login';
     }
@@ -39,7 +50,24 @@ export default function Dashboard() {
     window.location.href = '/login';
   };
 
-  if (isAuth === null) return <div className="min-h-screen bg-background" />; // blank white before redirect
+  const markRead = (index: number) => {
+    const updated = [...messages];
+    updated[index].read = true;
+    setMessages(updated);
+    localStorage.setItem('contact_messages', JSON.stringify(updated));
+    setSelectedMsg(updated[index]);
+  };
+
+  const deleteMsg = (index: number) => {
+    const updated = messages.filter((_, i) => i !== index);
+    setMessages(updated);
+    localStorage.setItem('contact_messages', JSON.stringify(updated));
+    setSelectedMsg(null);
+  };
+
+  const unreadCount = messages.filter(m => !m.read).length;
+
+  if (isAuth === null) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-screen bg-[#F0F0F0] flex font-nunito">
@@ -64,11 +92,17 @@ export default function Dashboard() {
               <Terminal size={18} /> Logs
             </a>
             <a href="#" className="flex items-center gap-3 text-gray-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl font-bold transition-colors">
+              <Mail size={18} />
+              <span>Inbox</span>
+              {unreadCount > 0 && (
+                <span className="ml-auto bg-primary text-black text-[10px] font-black rounded-full px-2 py-0.5">{unreadCount}</span>
+              )}
+            </a>
+            <a href="#" className="flex items-center gap-3 text-gray-400 hover:bg-white/5 hover:text-white px-4 py-3 rounded-xl font-bold transition-colors">
               <Settings size={18} /> Settings
             </a>
           </nav>
         </div>
-        
         <div className="p-4">
           <button 
             onClick={handleLogout}
@@ -95,7 +129,9 @@ export default function Dashboard() {
             </div>
             <button className="h-10 w-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-foreground relative shadow-sm">
               <Bell size={18} />
-              <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-red-500 border border-white" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-red-500 text-white text-[9px] font-black border-2 border-white">{unreadCount}</span>
+              )}
             </button>
           </div>
         </header>
@@ -125,9 +161,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Performance Chart Simulation */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Performance Chart */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -139,12 +174,11 @@ export default function Dashboard() {
                 <h2 className="text-2xl font-black font-playfair">Global Traffic Map</h2>
                 <p className="text-sm font-bold text-gray-400 mt-1 uppercase tracking-wider">Last 12 hours telemetry</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <span className="text-xs font-black uppercase tracking-widest text-primary">Live</span>
               </div>
             </div>
-
             <div className="h-64 flex items-end justify-between gap-2 relative z-10">
               {CHART_DATA.map((val, i) => (
                 <div key={i} className="w-full flex flex-col justify-end group">
@@ -154,7 +188,6 @@ export default function Dashboard() {
                     transition={{ delay: 0.5 + (i * 0.05), type: "spring" }}
                     className="w-full bg-white/20 rounded-t-sm relative transition-all group-hover:bg-primary"
                   >
-                    {/* Tooltip on hover */}
                     <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-black px-2 py-1 rounded shadow-lg transition-opacity">
                       {val}k
                     </div>
@@ -162,13 +195,11 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-            
-            {/* Background design */}
             <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-transparent to-primary/10 opacity-20 pointer-events-none" />
             <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
           </motion.div>
 
-          {/* Recent Activity */}
+          {/* System Logs */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -179,19 +210,14 @@ export default function Dashboard() {
               <h2 className="text-xl font-black text-foreground font-playfair">System Logs</h2>
               <button className="text-xs font-bold text-primary uppercase hover:underline">View All</button>
             </div>
-            
             <div className="flex-1 space-y-6">
               {RECENT_ACTIVITY.map((log) => (
                 <div key={log.id} className="relative pl-6">
-                  {/* Timeline line */}
                   <span className="absolute left-[7px] top-4 bottom-[-24px] w-0.5 bg-gray-100 last:hidden" />
-                  
-                  {/* Timeline dot */}
                   <span className={`absolute left-0 top-1.5 w-4 h-4 rounded-full border-4 border-white shadow-sm ${
                     log.status === 'Success' ? 'bg-green-500' : 
                     log.status === 'Warning' ? 'bg-primary' : 'bg-blue-500'
                   }`} />
-                  
                   <p className="text-sm font-black text-foreground">{log.action}</p>
                   <div className="flex items-center justify-between mt-1">
                     <p className="text-xs font-bold text-gray-400">{log.project}</p>
@@ -201,8 +227,123 @@ export default function Dashboard() {
               ))}
             </div>
           </motion.div>
-
         </div>
+
+        {/* CONTACT INBOX */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div className="flex items-center justify-between p-8 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-gray-50">
+                <Mail size={20} className="text-foreground" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-foreground font-playfair">Contact Inbox</h2>
+                <p className="text-xs font-bold text-muted uppercase tracking-wider">
+                  {messages.length} message{messages.length !== 1 ? 's' : ''} · {unreadCount} unread
+                </p>
+              </div>
+            </div>
+            {unreadCount > 0 && (
+              <span className="bg-primary text-black text-sm font-black rounded-full px-3 py-1">{unreadCount} New</span>
+            )}
+          </div>
+
+          {messages.length === 0 ? (
+            <div className="p-16 text-center">
+              <MailOpen size={40} className="mx-auto text-gray-200 mb-4" />
+              <p className="text-muted font-bold uppercase tracking-wider text-sm">No messages yet</p>
+              <p className="text-gray-300 text-xs mt-1">Messages from your contact form will appear here</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`flex items-start gap-4 p-6 cursor-pointer transition-colors hover:bg-gray-50 ${!msg.read ? 'bg-primary/5' : ''}`}
+                  onClick={() => markRead(i)}
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-foreground text-white flex items-center justify-center font-playfair font-black text-lg flex-shrink-0">
+                    {msg.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-black ${!msg.read ? 'text-foreground' : 'text-gray-600'}`}>{msg.name}</p>
+                        {!msg.read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
+                      </div>
+                      <p className="text-xs text-gray-300 font-bold flex-shrink-0">
+                        {new Date(msg.time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                    <p className="text-xs text-primary font-bold mb-1">{msg.email}</p>
+                    <p className="text-sm text-muted line-clamp-2">{msg.message}</p>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteMsg(i); }}
+                    className="text-gray-200 hover:text-red-400 transition-colors flex-shrink-0 p-1"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Message Modal */}
+        <AnimatePresence>
+          {selectedMsg && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6"
+              onClick={() => setSelectedMsg(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-10 relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button onClick={() => setSelectedMsg(null)} className="absolute top-6 right-6 text-gray-300 hover:text-foreground transition-colors">
+                  <X size={24} />
+                </button>
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-foreground text-white flex items-center justify-center font-playfair font-black text-2xl">
+                    {selectedMsg.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-foreground font-playfair">{selectedMsg.name}</h3>
+                    <p className="text-sm text-primary font-bold">{selectedMsg.email}</p>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-2xl p-6">
+                  <p className="text-foreground font-semibold leading-relaxed">{selectedMsg.message}</p>
+                </div>
+                <p className="text-xs text-gray-300 font-bold uppercase tracking-wider mt-4">
+                  Received: {new Date(selectedMsg.time).toLocaleString()}
+                </p>
+                <a
+                  href={`mailto:${selectedMsg.email}?subject=Re: Your inquiry&body=Hi ${selectedMsg.name},%0D%0A%0D%0A`}
+                  className="mt-6 flex h-12 items-center justify-center gap-2 rounded-2xl bg-foreground text-white font-black hover:bg-foreground/80 transition-all"
+                >
+                  <Mail size={16} /> Reply via Email
+                </a>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </main>
     </div>
   );

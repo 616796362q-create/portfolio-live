@@ -12,7 +12,7 @@ export default function Contact() {
     setStatus('loading');
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const data = Object.fromEntries(formData.entries()) as { name: string; email: string; message: string };
 
     try {
       const response = await fetch('/api/contact', {
@@ -24,6 +24,11 @@ export default function Contact() {
       const result = await response.json();
 
       if (response.ok) {
+        // Save to localStorage for dashboard
+        const existing = JSON.parse(localStorage.getItem('contact_messages') || '[]');
+        existing.unshift({ ...data, time: new Date().toISOString(), read: false });
+        localStorage.setItem('contact_messages', JSON.stringify(existing.slice(0, 50)));
+
         setStatus('success');
         setMessage(result.message);
         (e.target as HTMLFormElement).reset();
