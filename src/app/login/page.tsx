@@ -15,6 +15,9 @@ export default function LoginPage() {
       if (password === '1234') {
         localStorage.setItem('auth_status', 'true');
         setStatus('success');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
       } else {
         setStatus('error');
         setTimeout(() => setStatus('idle'), 2000);
