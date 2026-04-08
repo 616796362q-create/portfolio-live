@@ -50,6 +50,35 @@ export default function Dashboard() {
     window.location.href = '/login';
   };
 
+  const loadDemoMessages = () => {
+    const demos: ContactMessage[] = [
+      {
+        name: 'Ahmed Hassan',
+        email: 'ahmed@example.com',
+        message: 'Hi Abdikarim! I saw your POS project and I am really impressed. I would love to discuss a similar system for my retail chain of 5 stores. Can we schedule a call this week?',
+        time: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+        read: false,
+      },
+      {
+        name: 'Fatima Ali',
+        email: 'fatima@startup.io',
+        message: 'Hello! We are a Nairobi-based startup looking for a full-stack developer for a 3-month contract. Your portfolio stood out. Are you available for remote work?',
+        time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        read: false,
+      },
+      {
+        name: 'Mohamed Yusuf',
+        email: 'mo.yusuf@agency.com',
+        message: 'Great work on the Manara Plaza platform! We are a digital agency looking to partner with talented developers. Would you be interested in a collaboration?',
+        time: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        read: true,
+      },
+    ];
+    const merged = [...demos, ...messages];
+    setMessages(merged);
+    localStorage.setItem('contact_messages', JSON.stringify(merged));
+  };
+
   const markRead = (index: number) => {
     const updated = [...messages];
     updated[index].read = true;
@@ -248,16 +277,38 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            {unreadCount > 0 && (
-              <span className="bg-primary text-black text-sm font-black rounded-full px-3 py-1">{unreadCount} New</span>
-            )}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={loadDemoMessages}
+                className="text-xs font-black uppercase tracking-wider bg-primary/10 text-foreground hover:bg-primary hover:text-black px-4 py-2 rounded-xl transition-all"
+              >
+                + Load Demo
+              </button>
+              {messages.length > 0 && (
+                <button
+                  onClick={() => { setMessages([]); localStorage.removeItem('contact_messages'); }}
+                  className="text-xs font-black uppercase tracking-wider bg-red-50 text-red-400 hover:bg-red-100 px-4 py-2 rounded-xl transition-all"
+                >
+                  Clear All
+                </button>
+              )}
+              {unreadCount > 0 && (
+                <span className="bg-primary text-black text-sm font-black rounded-full px-3 py-1">{unreadCount} New</span>
+              )}
+            </div>
           </div>
 
           {messages.length === 0 ? (
             <div className="p-16 text-center">
               <MailOpen size={40} className="mx-auto text-gray-200 mb-4" />
               <p className="text-muted font-bold uppercase tracking-wider text-sm">No messages yet</p>
-              <p className="text-gray-300 text-xs mt-1">Messages from your contact form will appear here</p>
+              <p className="text-gray-300 text-xs mt-2 mb-6">Messages from your contact form will appear here</p>
+              <button
+                onClick={loadDemoMessages}
+                className="inline-flex items-center gap-2 bg-foreground text-white font-black text-sm px-6 py-3 rounded-2xl hover:bg-foreground/80 transition-all"
+              >
+                Load Demo Messages
+              </button>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
