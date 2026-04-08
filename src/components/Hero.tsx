@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowDown, Linkedin, Github } from 'lucide-react';
+import { ArrowDown, Linkedin, Github, Mail } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -60,6 +60,14 @@ export default function Hero() {
               className="inline-flex h-14 items-center gap-2 rounded-xl bg-foreground px-10 text-base font-bold text-white transition-all hover:bg-foreground/80 hover:-translate-y-0.5 shadow-xl shadow-foreground/10"
             >
               View Work
+            </a>
+            <a
+              href="/dashboard"
+              id="hero-cta-inbox"
+              className="inline-flex h-14 items-center gap-2 rounded-xl border-2 border-foreground text-foreground px-6 text-base font-bold transition-all hover:bg-foreground hover:text-white hover:-translate-y-0.5"
+            >
+              <Mail size={20} />
+              Inbox
             </a>
             <a
               href="https://github.com/616796362q-create"

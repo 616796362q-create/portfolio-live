@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Github, ExternalLink } from 'lucide-react';
-import projectData from '@/data/projects.json';
+import { Github as GithubIcon, ExternalLink as ExternalIcon } from 'lucide-react';
 
 type Project = {
   id: number;
@@ -15,7 +15,36 @@ type Project = {
 };
 
 export default function Projects() {
-  const projects = projectData as Project[];
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        setProjects(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch projects', err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-32 bg-[#F9F9F6]">
+        <div className="container mx-auto px-6 text-center">
+           <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-48 bg-gray-200 rounded-full mb-8" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-20">
+                 {[1, 2, 3].map(i => <div key={i} className="h-96 bg-gray-200 rounded-3xl" />)}
+              </div>
+           </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-32 bg-[#F9F9F6] overflow-hidden">
@@ -108,7 +137,7 @@ export default function Projects() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-foreground transition-colors hover:text-primary"
                     >
-                      Live Demo <ExternalLink size={13} />
+                      Live Demo <ExternalIcon size={13} />
                     </a>
                   )}
                   {project.githubUrl && (
@@ -118,7 +147,7 @@ export default function Projects() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-foreground transition-colors hover:text-primary"
                     >
-                      GitHub <Github size={13} />
+                      GitHub <GithubIcon size={13} />
                     </a>
                   )}
                   {project.link === '#' && !project.githubUrl && (

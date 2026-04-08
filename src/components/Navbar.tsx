@@ -64,12 +64,20 @@ export default function Navbar() {
           </ul>
           
           {isAuth && (
-            <button 
-              onClick={handleSignOut}
-              className="flex h-10 items-center gap-2 rounded-xl bg-red-50 px-5 text-sm font-black text-red-600 transition-all hover:bg-red-100 hover:scale-[1.02]"
-            >
-              <LogOut size={16} /> Sign Out
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="flex h-10 items-center gap-2 rounded-xl bg-foreground px-5 text-sm font-black text-white transition-all hover:bg-foreground/80 hover:scale-[1.02]"
+              >
+                Portal
+              </Link>
+              <button 
+                onClick={handleSignOut}
+                className="flex h-10 items-center gap-2 rounded-xl bg-red-50 px-5 text-sm font-black text-red-600 transition-all hover:bg-red-100 hover:scale-[1.02]"
+              >
+                <LogOut size={16} /> Sign Out
+              </button>
+            </div>
           )}
         </div>
 

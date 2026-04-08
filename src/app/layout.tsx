@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Nunito } from "next/font/google";
 import "./globals.css";
 import Preloader from "@/components/Preloader";
+import { Analytics } from "@vercel/analytics/react";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <Preloader />
         {children}
+        <Analytics />
       </body>
     </html>
   );
